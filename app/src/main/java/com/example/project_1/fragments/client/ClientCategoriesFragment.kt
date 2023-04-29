@@ -28,6 +28,7 @@ class ClientCategoriesFragment : Fragment() {
 
     private var myView : View? = null
     private var recyclerView : RecyclerView ? = null
+
     private var categoriesProvider : CategoriesProvider ? = null
     private var adapter : CategoriesAdapter ? = null
     private var user : User? = null
