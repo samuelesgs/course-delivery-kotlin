@@ -66,13 +66,6 @@ class RestaurantHomeActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-    private fun logout() {
-        this.sharedPref.remove("user")
-        val intent = Intent(this, MainActivity::class.java)
-        finish()
-        startActivity(intent)
-    }
-
     private fun getUserSession() {
         val gson = Gson()
         if (!this.sharedPref.getData("user").isNullOrBlank()) {

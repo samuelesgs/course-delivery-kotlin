@@ -30,18 +30,20 @@ class ClientHomeActivity : AppCompatActivity() {
 
         getUserSession()
         this.bottomNavigationBar = findViewById(R.id.bottom_navigation)
-        openFragment(ClientCategoriesFragment())
+        openFragment(ClientProfileFragment())
+        Log.i(TAG, "ES AQUI PA")
         bottomNavigationBar.setOnItemSelectedListener {
+            Log.i(TAG, "onCreate: "+it.itemId)
             when (it.itemId) {
-                R.id.item_home -> {
+                R.id.item_home_client -> {
                     openFragment(ClientCategoriesFragment())
                     true
                 }
-                R.id.item_orders -> {
+                R.id.item_orders_client -> {
                     openFragment(ClientOrdersFragment())
                     true
                 }
-                R.id.item_profile -> {
+                R.id.item_profile_client -> {
                     openFragment(ClientProfileFragment())
                     true
                 }

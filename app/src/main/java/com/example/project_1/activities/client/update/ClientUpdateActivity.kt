@@ -9,6 +9,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.project_1.R
 import com.example.project_1.models.ResponseHttp
@@ -37,7 +39,8 @@ class ClientUpdateActivity : AppCompatActivity() {
     var user : User? = null
 
     private var imageFile : File? = null
-    var userProviders : UsersProvider ? = null
+    private var userProviders : UsersProvider ? = null
+    var toolbar : Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +48,7 @@ class ClientUpdateActivity : AppCompatActivity() {
 
         sharedPref = SharedPref(this)
 
+        toolbar = findViewById(R.id.toolbar)
         circleImageUser = findViewById(R.id.circleImageView)
         editTextName = findViewById(R.id.editName)
         editTextLastname = findViewById(R.id.editLastName)
@@ -57,6 +61,10 @@ class ClientUpdateActivity : AppCompatActivity() {
         editTextName?.setText(user?.name)
         editTextLastname?.setText(user?.lastname)
         editTextPhone?.setText(user?.phone)
+        toolbar?.title = "Editar Perfil"
+        toolbar?.setTitleTextColor(ContextCompat.getColor(this, R.color.white))
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if (!user?.image.isNullOrBlank()) {
             Glide.with(this).load(user?.image).into(circleImageUser!!)
