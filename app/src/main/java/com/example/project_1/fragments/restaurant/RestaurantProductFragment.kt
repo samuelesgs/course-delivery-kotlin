@@ -85,7 +85,7 @@ class RestaurantProductFragment : Fragment() {
         val description = editDescription?.text.toString()
         val priceText = editTextPrice?.text.toString()
         if (isValidForm(name, description, priceText)) {
-            
+
         }
     }
 
