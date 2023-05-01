@@ -21,11 +21,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.project_1.R
 import com.example.project_1.adapters.CategoriesAdapter
 import com.example.project_1.models.Category
+import com.example.project_1.models.Product
+import com.example.project_1.models.ResponseHttp
 import com.example.project_1.models.User
 import com.example.project_1.providers.CategoriesProvider
+import com.example.project_1.providers.ProductsProvider
 import com.example.project_1.utils.SharedPref
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.gson.Gson
+import com.tommasoberlose.progressdialog.ProgressDialogFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,6 +53,7 @@ class RestaurantProductFragment : Fragment() {
 
     private lateinit var sharedPref : SharedPref
     private var categoriesProvider : CategoriesProvider? = null
+    private var productsProvider: ProductsProvider ? = null
     private var user : User? = null
     private var categories = ArrayList<Category>()
     private var idCategory = ""
@@ -60,6 +65,7 @@ class RestaurantProductFragment : Fragment() {
         sharedPref = SharedPref(requireActivity())
         getUserSession()
         categoriesProvider = CategoriesProvider(user?.sessionToken!!)
+        productsProvider = ProductsProvider(user?.sessionToken!!)
         loadCategories()
         val myView = inflater.inflate(R.layout.fragment_restaurant_product, container, false)
         editName = myView?.findViewById(R.id.editName)
@@ -85,8 +91,41 @@ class RestaurantProductFragment : Fragment() {
         val description = editDescription?.text.toString()
         val priceText = editTextPrice?.text.toString()
         if (isValidForm(name, description, priceText)) {
+            val files = ArrayList<File>()
+            files.add(imageFile1!!)
+            files.add(imageFile2!!)
+            files.add(imageFile3!!)
+            val product = Product(name = name, description = description, price = priceText.toDouble(), idCategory = idCategory)
+            ProgressDialogFragment.showProgressBar(requireActivity())
+            productsProvider?.create(files, product)?.enqueue(object : Callback<ResponseHttp> {
+                override fun onResponse(call: Call<ResponseHttp>, response: Response<ResponseHttp>) {
+                    Log.i(TAG, "onResponse: "+ response)
+                    ProgressDialogFragment.hideProgressBar(requireActivity())
+                    if (response.body()?.isSuccess == true) {
+                        resetForm()
+                    }
+                }
 
+                override fun onFailure(call: Call<ResponseHttp>, t: Throwable) {
+                    Log.e(TAG, "onFailure: ${t.message}" )
+                    Toast.makeText(requireContext(), "ERROR : ${t.message}", Toast.LENGTH_SHORT).show()
+                    ProgressDialogFragment.hideProgressBar(requireActivity())
+                }
+
+            });
         }
+    }
+
+    private fun resetForm() {
+        editName?.setText("")
+        editDescription?.setText("")
+        editTextPrice?.setText("")
+        imageFile1 = null
+        imageFile2 = null
+        imageFile3 = null
+        image1?.setImageResource(R.drawable.ic_image)
+        image2?.setImageResource(R.drawable.ic_image)
+        image3?.setImageResource(R.drawable.ic_image)
     }
 
     private fun isValidForm(name : String, description : String, price: String) : Boolean{
