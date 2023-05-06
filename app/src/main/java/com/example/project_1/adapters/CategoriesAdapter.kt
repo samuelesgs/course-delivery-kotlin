@@ -2,6 +2,7 @@ package com.example.project_1.adapters
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_1.R
+import com.example.project_1.activities.client.products.list.ClientProductsListActivity
 import com.example.project_1.models.Category
 import com.example.project_1.utils.SharedPref
 
@@ -32,8 +34,15 @@ class CategoriesAdapter(val context: Context, val categories : ArrayList<Categor
         holder.textViewName.text = category.name
         Glide.with(context).load(category.image).into(holder.imageViewCategory)
         holder.itemView.setOnClickListener {
-            Log.i(TAG, "Click: " + category.name)
+            goToCategory(category)
         }
+    }
+
+
+    private fun goToCategory(category: Category) {
+        val intent = Intent(context, ClientProductsListActivity::class.java)
+        intent.putExtra("idCategory", category.id)
+        context.startActivity(intent)
     }
 
     override fun getItemCount(): Int {

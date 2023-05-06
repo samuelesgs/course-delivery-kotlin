@@ -10,13 +10,17 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import java.io.File
 
-class ProductsProvider(val token : String) {
+class ProductsProvider(val token : String ? = null) {
 
     private var productsRoutes : ProductsRoutes ? = null
 
     init {
         val api = ApiRoutes()
-        productsRoutes = api.getProductsRoutes(token)
+        productsRoutes = api.getProductsRoutes(token!!)
+    }
+
+    fun findByCategory(id_category :  String) : Call<ArrayList<Product>> ? {
+        return productsRoutes?.findByCategory(id_category, token!!)
     }
 
     fun create (files : List<File>, product: Product) : Call<ResponseHttp> ? {
@@ -26,6 +30,6 @@ class ProductsProvider(val token : String) {
             images[i] = MultipartBody.Part.createFormData("image", files[i].name, reqFile)
         }
         val requestBody = RequestBody.create(MediaType.parse("text/plain"), product.toJson())
-        return productsRoutes?.create(images, requestBody, token)
+        return productsRoutes?.create(images, requestBody, token!!)
     }
 }
