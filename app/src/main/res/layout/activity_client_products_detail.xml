@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.client.products.detail.ClientProductsDetailActivity">
+
+    <com.denzcoskun.imageslider.ImageSlider
+        android:id="@+id/imageSlider"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        app:iss_auto_cycle="true"
+        app:iss_delay="0"
+        app:iss_period="5000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Nombre"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageSlider" />
+
+    <TextView
+        android:id="@+id/textLabelDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Descripción"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textName"
+        app:layout_constraintStart_toStartOf="@+id/textName"
+        app:layout_constraintTop_toBottomOf="@+id/textName" />
+
+    <TextView
+        android:id="@+id/textDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:maxLength="255"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/textLabelDescription"
+        app:layout_constraintStart_toStartOf="@+id/textLabelDescription"
+        app:layout_constraintTop_toBottomOf="@+id/textLabelDescription" />
+
+    <ImageView
+        android:id="@+id/imagePositive"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="@+id/textDescription"
+        app:layout_constraintTop_toBottomOf="@+id/textDescription"
+        app:srcCompat="@drawable/ic_circle_positive" />
+
+    <TextView
+        android:id="@+id/textQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:gravity="center_vertical"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="@+id/imagePositive"
+        app:layout_constraintStart_toEndOf="@+id/imagePositive"
+        app:layout_constraintTop_toTopOf="@+id/imagePositive" />
+
+    <ImageView
+        android:id="@+id/imageNegative"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintStart_toEndOf="@+id/textQuantity"
+        app:layout_constraintTop_toTopOf="@+id/textQuantity"
+        app:srcCompat="@drawable/ic_circle_negative" />
+
+    <TextView
+        android:id="@+id/textPrice"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical|end"
+        android:text="0$"
+        app:layout_constraintBottom_toBottomOf="@+id/imageNegative"
+        app:layout_constraintEnd_toEndOf="@+id/textDescription"
+        app:layout_constraintStart_toEndOf="@+id/imageNegative"
+        app:layout_constraintTop_toTopOf="@+id/imageNegative" />
+
+    <Button
+        android:id="@+id/buttonAdd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Agregar producto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textPrice"
+        app:layout_constraintStart_toStartOf="@+id/imagePositive" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

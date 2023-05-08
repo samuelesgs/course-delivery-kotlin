@@ -2,6 +2,7 @@ package com.example.project_1.adapters
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +11,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.project_1.R
+import com.example.project_1.activities.client.products.detail.ClientProductsDetailActivity
 import com.example.project_1.models.Product
 import com.example.project_1.utils.SharedPref
+import com.google.gson.Gson
 
 class ProductAdapter(val context: Context, val products : ArrayList<Product>) :
     RecyclerView.Adapter<ProductAdapter.ProductsViewHolder>() {
@@ -27,12 +30,18 @@ class ProductAdapter(val context: Context, val products : ArrayList<Product>) :
     }
 
     override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
-        val product = products[position];
+        val product = products[position]
         holder.textName.text = product.name
         Glide.with(context).load(product.image1).into(holder.imageViewProduct)
-        holder.itemView.setOnClickListener {  }
+        holder.textPrice.text = product.price.toString()
+        holder.itemView.setOnClickListener { goToDetail(product) }
     }
 
+    private fun goToDetail(product: Product) {
+        val intent = Intent(context, ClientProductsDetailActivity::class.java)
+        intent.putExtra("product", product.toJson())
+        context.startActivity(intent)
+    }
 
     override fun getItemCount(): Int {
         return products.size

@@ -1,5 +1,6 @@
 package com.example.project_1.providers
 
+import android.util.Log
 import com.example.project_1.api.ApiRoutes
 import com.example.project_1.models.Product
 import com.example.project_1.models.ResponseHttp
@@ -25,11 +26,13 @@ class ProductsProvider(val token : String ? = null) {
 
     fun create (files : List<File>, product: Product) : Call<ResponseHttp> ? {
         val images = arrayOfNulls<MultipartBody.Part>(files.size)
+        var TAG = "CREATE"
         for (i in 0 until files.size) {
             val reqFile = RequestBody.create(MediaType.parse("image/*"), files[i])
             images[i] = MultipartBody.Part.createFormData("image", files[i].name, reqFile)
         }
         val requestBody = RequestBody.create(MediaType.parse("text/plain"), product.toJson())
+        Log.i(TAG, "create: "+product.toJson())
         return productsRoutes?.create(images, requestBody, token!!)
     }
 }

@@ -20,6 +20,7 @@
             android:ems="10"
             android:hint="Nombre del producto"
             android:inputType="textPersonName"
+            android:text="test"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +35,7 @@
             android:ems="10"
             android:hint="Descripcion"
             android:inputType="textPersonName"
+            android:text="test"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editName" />
@@ -45,12 +47,13 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:hint="Precio"
+            android:inputType="numberDecimal"
+            android:text="12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editDescription"
-            android:hint="Precio"
-            android:ems="10"
-            android:inputType="numberDecimal" />
+            app:layout_constraintTop_toBottomOf="@+id/editDescription" />
 
         <LinearLayout
             android:id="@+id/linearLayout2"
