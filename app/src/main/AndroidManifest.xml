@@ -21,6 +21,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.client.shopping_bag.ClientShoppingBagActivity"
+            android:parentActivityName=".activities.client.home.ClientHomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.client.products.detail.ClientProductsDetailActivity"
             android:exported="false" />
         <activity

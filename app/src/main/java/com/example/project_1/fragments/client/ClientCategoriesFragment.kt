@@ -1,17 +1,17 @@
 package com.example.project_1.fragments.client
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_1.R
+import com.example.project_1.activities.client.shopping_bag.ClientShoppingBagActivity
 import com.example.project_1.adapters.CategoriesAdapter
 import com.example.project_1.models.Category
 import com.example.project_1.models.User
@@ -43,6 +43,7 @@ class ClientCategoriesFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         myView = inflater.inflate(R.layout.fragment_client_categories, container, false)
+        setHasOptionsMenu(true)
         sharedPref = SharedPref(requireActivity())
 
         //session
@@ -63,6 +64,23 @@ class ClientCategoriesFragment : Fragment() {
         loadCategories()
 
         return myView
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_shopping_bag, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.item_shopping_bag) {
+            goToShoppingBag()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun goToShoppingBag() {
+        val intent = Intent(requireContext(), ClientShoppingBagActivity::class.java)
+        startActivity(intent)
     }
 
     private fun loadCategories() {

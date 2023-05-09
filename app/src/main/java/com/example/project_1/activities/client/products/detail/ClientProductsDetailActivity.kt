@@ -1,5 +1,6 @@
 package com.example.project_1.activities.client.products.detail
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -38,7 +39,6 @@ class ClientProductsDetailActivity : AppCompatActivity() {
 
     var selectedProducts = ArrayList<Product>()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_client_products_detail)
@@ -71,8 +71,6 @@ class ClientProductsDetailActivity : AppCompatActivity() {
         } else { // YA existe el producto en shared pref - debemos editar la cantidad
             selectedProducts[index].quantity = quantity
         }
-
-        selectedProducts.add(product!!)
         sharedPref?.save("order", selectedProducts)
     }
 
@@ -89,12 +87,8 @@ class ClientProductsDetailActivity : AppCompatActivity() {
 
                 productPrice = product?.price!! * product?.quantity!!
                 textPrice?.text = "${productPrice}$"
-            }
-
-
-
-            for (p in selectedProducts) {
-                Log.d(TAG, "getProductsFromSharedPref: $p")
+                buttonAdd?.setText("Editar producto")
+                buttonAdd?.setBackgroundColor(Color.GREEN)
             }
         }
     }
