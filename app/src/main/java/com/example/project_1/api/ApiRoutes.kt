@@ -1,5 +1,6 @@
 package com.example.project_1.api
 
+import com.example.project_1.routes.AddressRoutes
 import com.example.project_1.routes.CategoriesRoutes
 import com.example.project_1.routes.ProductsRoutes
 import com.example.project_1.routes.UsersRoutes
@@ -19,6 +20,10 @@ class ApiRoutes {
 
     fun getCategoriesRoutes(token : String) : CategoriesRoutes {
         return  retrofit.getClientWithToken(Api_URL, token).create(CategoriesRoutes::class.java)
+    }
+
+    fun getAddressRoutes(token : String) : AddressRoutes {
+        return  retrofit.getClientWithToken(Api_URL, token).create(AddressRoutes::class.java)
     }
 
     fun getProductsRoutes(token: String) : ProductsRoutes {

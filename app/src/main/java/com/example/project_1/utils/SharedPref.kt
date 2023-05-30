@@ -4,15 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.example.project_1.models.User
 import com.google.gson.Gson
 
-class SharedPref(activity : Activity) {
+class SharedPref(val activity : Activity) {
 
-    private lateinit var prefs : SharedPreferences
-
-    init {
-        prefs = activity.getSharedPreferences("com.example.project_1", Context.MODE_PRIVATE)
-    }
+    private var prefs : SharedPreferences =
+        activity.getSharedPreferences("com.example.project_1", Context.MODE_PRIVATE)
 
     fun save(key : String, value : Any) {
         try {
@@ -33,5 +31,14 @@ class SharedPref(activity : Activity) {
 
     fun remove(key : String) {
         prefs.edit().remove(key).apply()
+    }
+
+    fun getUserFromSession() : User? {
+        val gson = Gson()
+        val sharedPref = SharedPref(activity)
+        if (!sharedPref.getData("user").isNullOrBlank()) {
+            return gson.fromJson(sharedPref.getData("user"), User::class.java)
+        }
+        return null
     }
 }
