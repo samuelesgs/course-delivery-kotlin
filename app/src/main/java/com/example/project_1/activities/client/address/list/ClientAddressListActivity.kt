@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
@@ -14,12 +15,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.project_1.R
 import com.example.project_1.activities.client.address.create.ClientAddressCreateActivity
+import com.example.project_1.activities.client.payments.form.ClientPaymentFormActivity
 import com.example.project_1.adapters.AddressAdapter
 import com.example.project_1.models.Address
 import com.example.project_1.models.User
 import com.example.project_1.providers.AddressProvider
 import com.example.project_1.utils.SharedPref
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,6 +43,8 @@ class ClientAddressListActivity : AppCompatActivity() {
     var address = ArrayList<Address>()
 
     var addressProvider : AddressProvider ? = null
+
+    val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +68,22 @@ class ClientAddressListActivity : AppCompatActivity() {
         addressProvider = AddressProvider(user?.sessionToken!!)
         this.getAddress()
 
+        findViewById<Button>(R.id.buttonContinue).setOnClickListener { getAddressFromSession() }
+
+    }
+
+    private fun getAddressFromSession() {
+        if (!sharedPref?.getData("address").isNullOrBlank()) {
+            val model = gson.fromJson(sharedPref?.getData("address"), Address::class.java)
+            goToPaymentsForm()
+        } else {
+            Toast.makeText(this, "Selecciona una direccion para continuar", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun goToPaymentsForm() {
+        val intent = Intent(this, ClientPaymentFormActivity::class.java)
+        startActivity(intent)
     }
 
     fun resetValue(position : Int) {
