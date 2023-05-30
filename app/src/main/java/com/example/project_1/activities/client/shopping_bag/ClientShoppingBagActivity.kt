@@ -1,8 +1,8 @@
 package com.example.project_1.activities.client.shopping_bag
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_1.R
+import com.example.project_1.activities.client.address.create.ClientAddressCreateActivity
+import com.example.project_1.activities.client.address.list.ClientAddressListActivity
 import com.example.project_1.adapters.ShoppingBagAdapter
 import com.example.project_1.models.Product
 import com.example.project_1.utils.SharedPref
@@ -45,7 +47,16 @@ class ClientShoppingBagActivity : AppCompatActivity() {
         recyclerView?.layoutManager = LinearLayoutManager(this)
         setSupportActionBar(toolbar)
         getProductsFromSharedPref()
-        Log.i(TAG, "onCreate: ${adapter?.itemCount}")
+        buttonContinue?.setOnClickListener { goToAddressList() }
+    }
+
+    private fun goToAddressList() {
+        val intent = Intent(this, ClientAddressListActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun setTotal(total : Double) {
+        textTotal?.text = "${total}$"
     }
 
 
@@ -53,10 +64,7 @@ class ClientShoppingBagActivity : AppCompatActivity() {
         if (!sharedPref?.getData("order").isNullOrBlank()) {
             val type = object : TypeToken<ArrayList<Product>>() {}.type
             selectedProducts = gson.fromJson(sharedPref?.getData("order"), type)
-
             adapter = ShoppingBagAdapter(this, selectedProducts)
-            Log.i("CLIENT ", "getProductsFromSharedPref: ${selectedProducts[0].toJson()}")
-
             recyclerView?.adapter = adapter
         }
     }

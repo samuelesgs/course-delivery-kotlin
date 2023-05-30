@@ -12,8 +12,8 @@ class Product
      @SerializedName("image2") val image2 : String? = null,
      @SerializedName("image3") val image3 : String? = null,
      @SerializedName("id_category") val idCategory: String? = null,
-     @SerializedName("price") val price : Double? = null,
-     @SerializedName("quantity") var quantity : Int? = null
+     @SerializedName("price") val price : Double = 0.0,
+     @SerializedName("quantity") var quantity : Int = 1
      ) {
 
     fun toJson() : String {
