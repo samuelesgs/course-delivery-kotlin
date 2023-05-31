@@ -1,9 +1,6 @@
 package com.example.project_1.api
 
-import com.example.project_1.routes.AddressRoutes
-import com.example.project_1.routes.CategoriesRoutes
-import com.example.project_1.routes.ProductsRoutes
-import com.example.project_1.routes.UsersRoutes
+import com.example.project_1.routes.*
 
 class ApiRoutes {
 
@@ -20,6 +17,10 @@ class ApiRoutes {
 
     fun getCategoriesRoutes(token : String) : CategoriesRoutes {
         return  retrofit.getClientWithToken(Api_URL, token).create(CategoriesRoutes::class.java)
+    }
+
+    fun getOrdersRoutes(token : String) : OrdersRoutes {
+        return  retrofit.getClientWithToken(Api_URL, token).create(OrdersRoutes::class.java)
     }
 
     fun getAddressRoutes(token : String) : AddressRoutes {

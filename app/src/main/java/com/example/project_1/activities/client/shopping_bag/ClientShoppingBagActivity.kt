@@ -59,7 +59,6 @@ class ClientShoppingBagActivity : AppCompatActivity() {
         textTotal?.text = "${total}$"
     }
 
-
     private fun getProductsFromSharedPref() {
         if (!sharedPref?.getData("order").isNullOrBlank()) {
             val type = object : TypeToken<ArrayList<Product>>() {}.type

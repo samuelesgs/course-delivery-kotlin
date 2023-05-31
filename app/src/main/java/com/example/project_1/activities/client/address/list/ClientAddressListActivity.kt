@@ -17,12 +17,14 @@ import com.example.project_1.R
 import com.example.project_1.activities.client.address.create.ClientAddressCreateActivity
 import com.example.project_1.activities.client.payments.form.ClientPaymentFormActivity
 import com.example.project_1.adapters.AddressAdapter
-import com.example.project_1.models.Address
-import com.example.project_1.models.User
+import com.example.project_1.adapters.ShoppingBagAdapter
+import com.example.project_1.models.*
 import com.example.project_1.providers.AddressProvider
+import com.example.project_1.providers.OrderProvider
 import com.example.project_1.utils.SharedPref
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,6 +45,9 @@ class ClientAddressListActivity : AppCompatActivity() {
     var address = ArrayList<Address>()
 
     var addressProvider : AddressProvider ? = null
+    var ordersProvider : OrderProvider ? = null
+
+    var selectedProducts = ArrayList<Product>()
 
     val gson = Gson()
 
@@ -66,16 +71,48 @@ class ClientAddressListActivity : AppCompatActivity() {
         fabCreate?.setOnClickListener { goToAddressCreate() }
 
         addressProvider = AddressProvider(user?.sessionToken!!)
+        ordersProvider = OrderProvider(user?.sessionToken!!)
         this.getAddress()
-
+        this.getProductsFromSharedPref()
         findViewById<Button>(R.id.buttonContinue).setOnClickListener { getAddressFromSession() }
 
+    }
+
+    private fun createOrder(idAddress : String) {
+        val order = Order(
+            products = selectedProducts,
+            idClient = user?.id!!,
+            idAddress = idAddress
+        );
+
+        ordersProvider?.create(order)?.enqueue(object: Callback<ResponseHttp> {
+            override fun onResponse(call: Call<ResponseHttp>, response: Response<ResponseHttp>) {
+                if (response.body() != null) {
+                    Toast.makeText(this@ClientAddressListActivity, "${response.body()?.message}", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@ClientAddressListActivity, "Ocurrio un error al crear la orden", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseHttp>, t: Throwable) {
+                Toast.makeText(this@ClientAddressListActivity, "Error ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+
+        });
+    }
+
+    private fun getProductsFromSharedPref() {
+        if (!sharedPref?.getData("order").isNullOrBlank()) {
+            val type = object : TypeToken<ArrayList<Product>>() {}.type
+            selectedProducts = gson.fromJson(sharedPref?.getData("order"), type)
+        }
     }
 
     private fun getAddressFromSession() {
         if (!sharedPref?.getData("address").isNullOrBlank()) {
             val model = gson.fromJson(sharedPref?.getData("address"), Address::class.java)
-            goToPaymentsForm()
+            createOrder(model.id!!)
+            //goToPaymentsForm()
         } else {
             Toast.makeText(this, "Selecciona una direccion para continuar", Toast.LENGTH_SHORT).show()
         }
