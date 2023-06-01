@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_1.R
-import com.example.project_1.activities.client.orders.detail.ClientOrdersDetailActivity
+import com.example.project_1.activities.restaurant.orders.detail.RestaurantOrdersDetailActivity
 import com.example.project_1.models.Order
 
-class OrdersClientAdapter(val context: Activity, val orders: ArrayList<Order>) : RecyclerView.Adapter<OrdersClientAdapter.OrdersViewHolder>() {
+class OrdersRestaurantAdapter(val context: Activity, val orders: ArrayList<Order>) : RecyclerView.Adapter<OrdersRestaurantAdapter.OrdersViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersViewHolder {
         return OrdersViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.cardview_orders_restaurant, parent, false))
@@ -24,7 +24,7 @@ class OrdersClientAdapter(val context: Activity, val orders: ArrayList<Order>) :
     override fun onBindViewHolder(holder: OrdersViewHolder, position: Int) {
         val model = orders[position]
         holder.textOrder.text = model.id
-        //holder.textClient.text = "${model.client?.name}"
+        holder.textClient.text = "${model.client?.name} ${model.client?.lastname}"
         holder.textDelivery.text = "${model.address?.address}"
         holder.textDate.text = model.timestamp
 
@@ -34,7 +34,7 @@ class OrdersClientAdapter(val context: Activity, val orders: ArrayList<Order>) :
     }
 
     private fun goToOrderDetail(order: Order) {
-        val intent = Intent(context, ClientOrdersDetailActivity::class.java)
+        val intent = Intent(context, RestaurantOrdersDetailActivity::class.java)
         intent.putExtra("order", order.toJson())
         context.startActivity(intent)
     }

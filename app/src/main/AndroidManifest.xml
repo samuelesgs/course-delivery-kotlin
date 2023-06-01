@@ -23,9 +23,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activities.client.orders.detail.ClientOrdersDetailActivity"
-            android:parentActivityName=".activities.client.home.ClientHomeActivity"
+            android:name=".activities.restaurant.orders.detail.RestaurantOrdersDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.client.orders.detail.ClientOrdersDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.client.home.ClientHomeActivity" />
         <activity
             android:name=".activities.client.payments.form.ClientPaymentFormActivity"
             android:exported="false" />

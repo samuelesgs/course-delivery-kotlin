@@ -25,6 +25,10 @@ class UsersProvider(val token : String ? = null) {
         }
     }
 
+    fun getFindDeliveryMen() : Call<ArrayList<User>>? {
+        return usersRoutes?.getFindDeliveryMen(token!!)
+    }
+
     fun register(user : User) : Call<ResponseHttp> ? {
         return usersRoutes?.registers(user)
     }
