@@ -15,6 +15,14 @@ class OrderProvider(val token: String) {
         ordersRoutes = api.getOrdersRoutes(token)
     }
 
+    fun getOrdersByStatus(status: String): Call<ArrayList<Order>>? {
+        return ordersRoutes?.getOrdersFindByStatus(status, token)
+    }
+
+    fun getOrdersByClientAndStatus(idClient: String, status: String): Call<ArrayList<Order>>? {
+        return ordersRoutes?.getOrdersFindByClientAndStatus(idClient, status, token)
+    }
+
     fun create(order: Order) : Call<ResponseHttp> ? {
         return ordersRoutes?.create(order, token)
     }

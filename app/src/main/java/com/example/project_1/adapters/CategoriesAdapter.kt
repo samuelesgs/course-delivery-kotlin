@@ -25,7 +25,7 @@ class CategoriesAdapter(val context: Context, val categories : ArrayList<Categor
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): CategoriesAdapter.CategoriesViewHolder {
+    ): CategoriesViewHolder {
         return CategoriesViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.cardview_categories, parent, false))
     }
 
