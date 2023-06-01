@@ -6,8 +6,10 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_1.R
+import com.example.project_1.adapters.OrderProductsAdapter
 import com.example.project_1.models.Order
 import com.example.project_1.utils.SharedPref
 import com.google.gson.Gson
@@ -47,12 +49,22 @@ class ClientOrdersDetailActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        textClient?.text = order?.client?.name
+        textClient?.text = "${order?.client?.name} ${order?.client?.lastname}"
         textAddress?.text = order?.address?.address
         textDate?.text = "${order?.timestamp}"
         textStatus?.text = order?.status
 
+        recyclerView?.layoutManager = LinearLayoutManager(this)
+
+        adapter()
+
         getTotal()
+    }
+
+    private fun adapter() {
+        val products = order?.products
+        val adapter = OrderProductsAdapter(this, products!!)
+        recyclerView?.adapter = adapter
     }
 
     private fun getTotal() {
