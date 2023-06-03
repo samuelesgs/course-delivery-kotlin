@@ -23,7 +23,23 @@ class OrderProvider(val token: String) {
         return ordersRoutes?.getOrdersFindByClientAndStatus(idClient, status, token)
     }
 
+    fun getOrdersByDeliveryAndStatus(idDelivery: String, status: String): Call<ArrayList<Order>>? {
+        return ordersRoutes?.getOrdersFindByDeliveryAndStatus(idDelivery, status, token)
+    }
+
     fun create(order: Order) : Call<ResponseHttp> ? {
         return ordersRoutes?.create(order, token)
+    }
+
+    fun updateToDispatched(order: Order): Call<ResponseHttp>? {
+        return ordersRoutes?.updateToDispatched(order, token)
+    }
+
+    fun updateToOnTheWay(order: Order): Call<ResponseHttp>? {
+        return ordersRoutes?.updateToOnTheWay(order, token)
+    }
+
+    fun updateToDelivered(order: Order): Call<ResponseHttp >? {
+        return ordersRoutes?.updateToDelivered(order, token)
     }
 }
