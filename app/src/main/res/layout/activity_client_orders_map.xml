@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.delivery.orders.map.DeliveryOrdersMapActivity">
+    tools:context=".activities.client.orders.map.ClientOrdersMapActivity">
 
     <include
         layout="@layout/action_bar"
@@ -36,36 +36,36 @@
         android:orientation="vertical"
         android:backgroundTint="@color/white"
         android:layout_gravity="bottom">
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_radius"
+            >
             <LinearLayout
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/card_radius"
-                >
-                <LinearLayout
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Barrio"/>
+                    android:text="Barrio"/>
 
-                    <TextView
-                        android:id="@+id/textNeighborhood"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nombre del barrio"/>
-                </LinearLayout>
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_my_location"/>
+                <TextView
+                    android:id="@+id/textNeighborhood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre del barrio"/>
+            </LinearLayout>
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_my_location"/>
         </LinearLayout>
 
         <LinearLayout
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             >
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imageClient"
+                android:id="@+id/imageDelivery"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/delivery"
@@ -131,10 +131,10 @@
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nombre"/>
+                    android:text="Cliente"/>
 
                 <TextView
-                    android:id="@+id/textClientName"
+                    android:id="@+id/textDeliveryName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nombre del cliente"/>
@@ -148,18 +148,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/buttonDelivered"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Entregar pedido"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="25dp"
-        android:textColor="@color/white"
-        />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -33,7 +33,7 @@ class ClientOrdersFragment : Fragment() {
         tabLayout?.isInlineLabel = true
 
 
-        var numberOfTab = 4
+        val numberOfTab = 4
         val adapter = TabsPagerAdapter(requireActivity().supportFragmentManager, lifecycle, numberOfTab)
         viewPager?.adapter = adapter
         viewPager?.isUserInputEnabled = true

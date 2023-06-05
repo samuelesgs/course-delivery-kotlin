@@ -35,12 +35,21 @@ class TabsPagerAdapter(
             }
             2 -> {
                 val bundle = Bundle()
+                bundle.putString("status", "EN CAMINO")
+                val clientStatusFragment = ClientOrdersStatusFragment()
+                clientStatusFragment.arguments = bundle
+                return clientStatusFragment
+            }
+            3 -> {
+                val bundle = Bundle()
                 bundle.putString("status", "ENTREGADO")
                 val clientStatusFragment = ClientOrdersStatusFragment()
                 clientStatusFragment.arguments = bundle
                 return clientStatusFragment
             }
             else -> return ClientOrdersStatusFragment()
+
+
         }
     }
 }

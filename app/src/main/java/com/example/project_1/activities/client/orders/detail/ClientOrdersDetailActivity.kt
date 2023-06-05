@@ -1,14 +1,18 @@
 package com.example.project_1.activities.client.orders.detail
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_1.R
+import com.example.project_1.activities.client.orders.map.ClientOrdersMapActivity
 import com.example.project_1.adapters.OrderProductsAdapter
 import com.example.project_1.models.Order
 import com.example.project_1.utils.SharedPref
@@ -59,6 +63,19 @@ class ClientOrdersDetailActivity : AppCompatActivity() {
         adapter()
 
         getTotal()
+        val buttonTrack = findViewById<Button>(R.id.buttonTrack)
+
+        if (order?.status == "EN CAMINO") {
+            buttonTrack.visibility = View.VISIBLE
+        }
+
+        buttonTrack.setOnClickListener { goToMap() }
+    }
+
+    private fun goToMap() {
+        val intent = Intent(this, ClientOrdersMapActivity::class.java)
+        intent.putExtra("order", order?.toJson())
+        startActivity(intent)
     }
 
     private fun adapter() {

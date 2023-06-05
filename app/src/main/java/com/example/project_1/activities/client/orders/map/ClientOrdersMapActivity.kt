@@ -1,11 +1,10 @@
-package com.example.project_1.activities.delivery.orders.map
+package com.example.project_1.activities.client.orders.map
 
 import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -32,25 +31,21 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import com.maps.route.extensions.drawRouteOnMap
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
-class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
-
+    private var deliveryLocation: LatLng ? = null
     private val TAG = "DELIVERY_ORDER_MAP_ACTIVITY"
 
-    var marketDelivery : Marker ? = null
-    var marketAddress : Marker ? = null
+    var marketDelivery : Marker? = null
+    var marketAddress : Marker? = null
 
     var googleMap : GoogleMap? = null
 
@@ -62,14 +57,14 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     var country = ""
     var address = ""
     var addressLatLng : LatLng? = null
-    var myLocationLatLng : LatLng ? = null
+    var myLocationLatLng : LatLng? = null
 
     var textNeighborhood : TextView? = null
     var textAddress : TextView? = null
-    var imageClient : ImageView ? = null
-    var textClientName : TextView ? = null
+    var imageDelivery : ImageView? = null
+    var textDeliveryName : TextView? = null
 
-    var order : Order ? = null
+    var order : Order? = null
 
     var gson = Gson()
 
@@ -78,9 +73,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     var ordersProvider : OrderProvider? = null
 
     var user : User?  = null
-    var sharedPref: SharedPref ? = null
-
-    var distanceBetween : Float = 0.0f
+    var sharedPref: SharedPref? = null
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
@@ -92,7 +85,6 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
                         LatLng(myLocationLatLng?.latitude!!, myLocationLatLng?.longitude!!)
                     ).zoom(15f).build()
                 ))
-            distanceBetween = getDistanceBetween(myLocationLatLng!!, addressLatLng!!)
             removeDeliveryMarker()
             addDeliveryMarker()
 
@@ -100,9 +92,11 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_delivery_orders_map)
-
+        setContentView(R.layout.activity_client_orders_map)
         order = gson.fromJson(intent.getStringExtra("order"),Order::class.java)
+        if (order?.lat != null && order?.lng != null) {
+            deliveryLocation = LatLng(order?.lat!!, order?.lng!!)
+        }
         sharedPref = SharedPref(this)
         user = sharedPref?.getUserFromSession()
         ordersProvider = OrderProvider(user?.sessionToken!!)
@@ -114,19 +108,12 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         textNeighborhood = findViewById(R.id.textNeighborhood)
         textAddress = findViewById(R.id.textAddress)
-        imageClient = findViewById(R.id.imageClient)
-        textClientName = findViewById(R.id.textClientName)
+        imageDelivery = findViewById(R.id.imageDelivery)
+        textDeliveryName = findViewById(R.id.textDeliveryName)
 
         setData()
 
         getLastLocation()
-        findViewById<Button>(R.id.buttonDelivered).setOnClickListener {
-            if (distanceBetween <= 350){
-                updateOrder()
-            } else {
-                Toast.makeText(this, "Acercate mas al lugar de entrega", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun onDestroy() {
@@ -136,53 +123,16 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun goToHome() {
-        val intent = Intent(this, DeliveryHomeActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun updateOrder() {
-        ordersProvider?.updateToDelivered(order!!)?.enqueue(object : Callback<ResponseHttp> {
-            override fun onResponse(call: Call<ResponseHttp>, response: Response<ResponseHttp>) {
-                if (response.body() != null) {
-                    Toast.makeText(this@DeliveryOrdersMapActivity, "${response.body()?.message}", Toast.LENGTH_SHORT).show()
-                    if (response.body()?.isSuccess == true) {
-                        goToHome()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseHttp>, t: Throwable) {
-                Toast.makeText(this@DeliveryOrdersMapActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-
-        })
-    }
-
-    private fun getDistanceBetween(fromLatLng : LatLng, toLatLng : LatLng) : Float {
-        var distance = 0.0f
-        val from =  Location("")
-        val to =  Location("")
-        from.latitude = fromLatLng.latitude
-        from.longitude = fromLatLng.longitude
-
-        to.latitude = toLatLng.latitude
-        to.longitude = toLatLng.longitude
-
-        distance = from.distanceTo(to)
-        return distance
-    }
-
-    private fun setData() {
+  private fun setData() {
         val address = order?.address?.address
         val neighborhood = order?.address?.neighborhood
-        val clientName = "${order?.client?.name} ${order?.client?.lastname}"
-        if (!order?.client?.image.isNullOrBlank()) {
-            Glide.with(this).load(order?.client?.image).into(imageClient!!)
+        val clientName = "${order?.delivery?.name} ${order?.delivery?.lastname}"
+        if (!order?.delivery?.image.isNullOrBlank()) {
+            Glide.with(this).load(order?.delivery?.image).into(imageDelivery!!)
         }
         textAddress?.text = address
         textNeighborhood?.text = neighborhood
-        textClientName?.text = clientName
+        textDeliveryName?.text = clientName
         findViewById<ImageView>(R.id.imagePhone).setOnClickListener {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), REQUEST_PHONE_CALL)
@@ -194,7 +144,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun call() {
         val intent = Intent(Intent.ACTION_CALL)
-        intent.data = Uri.parse("tel:${order?.client?.phone}")
+        intent.data = Uri.parse("tel:${order?.delivery?.phone}")
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
             Toast.makeText(this, "Permiso denegado para realizar la llamada", Toast.LENGTH_SHORT).show()
             return
@@ -208,16 +158,19 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun drawRoute() {
-        val addressLocation = LatLng(order?.address?.lat!!, order?.address?.lng!!)
-        googleMap?.drawRouteOnMap(getString(R.string.google_map_api_key), source = myLocationLatLng!!, destination = addressLocation, context = this, color = Color.GREEN, polygonWidth = 10, boundMarkers = false, markers = false)
+        if (deliveryLocation != null) {
+            val addressLocation = LatLng(order?.address?.lat!!, order?.address?.lng!!)
+            googleMap?.drawRouteOnMap(getString(R.string.google_map_api_key), source = deliveryLocation!!, destination = addressLocation, context = this, color = Color.GREEN, polygonWidth = 10, boundMarkers = false, markers = false)
+        }
     }
 
     private fun addDeliveryMarker(){
-        marketDelivery = googleMap?.addMarker(
-            MarkerOptions()
-                .position(myLocationLatLng!!)
-                .title("Mi posicion").icon(BitmapDescriptorFactory.fromResource(R.drawable.delivery))
-        )
+        if (deliveryLocation != null) {
+            marketDelivery = googleMap?.addMarker(
+                MarkerOptions()
+                    .position(deliveryLocation!!)
+                    .title("Posicion repartidor").icon(BitmapDescriptorFactory.fromResource(R.drawable.delivery)))
+        }
     }
 
     private fun addAddressMarker(){
@@ -229,6 +182,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 .title("Mi Direccion").icon(BitmapDescriptorFactory.fromResource(R.drawable.home_location))
         )
     }
+
     private fun requestNewLocationData() {
         val locationRequest = LocationRequest.create().apply{
             interval = 100
@@ -260,24 +214,24 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             if (isLocationEnable()) {
 
-                requestNewLocationData()
-
                 fusedLocationClient?.lastLocation?.addOnCompleteListener { task ->
                     val location = task.result
-                    if (location != null) {
+                    if (location != null){
                         myLocationLatLng = LatLng(location.latitude, location.longitude)
-                        updateLatLng(location.latitude, location.longitude)
+
                         removeDeliveryMarker()
                         addDeliveryMarker()
                         addAddressMarker()
                         drawRoute()
-                        googleMap?.moveCamera(
-                            CameraUpdateFactory.newCameraPosition(
-                                CameraPosition.builder().target(
-                                    LatLng(location.latitude, location.longitude)
-                                ).zoom(15f).build()
-                            )
-                        )
+                        if (deliveryLocation != null) {
+                            googleMap?.moveCamera(
+                                CameraUpdateFactory.newCameraPosition(
+                                    CameraPosition.builder().target(
+                                        LatLng(deliveryLocation?.latitude!!, deliveryLocation?.longitude!!)
+                                    ).zoom(15f).build()
+                                ))
+                        }
+
                     }
                 }
             } else {
@@ -291,23 +245,6 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             requestPermissions()
         }
-    }
-
-    private fun updateLatLng(lat : Double, lng : Double) {
-        order?.lat = lat
-        order?.lng = lng
-        ordersProvider?.updateLatLng(order!!)?.enqueue(object : Callback<ResponseHttp> {
-            override fun onResponse(call: Call<ResponseHttp>, response: Response<ResponseHttp>) {
-                if (response.body() != null) {
-                    Toast.makeText(this@DeliveryOrdersMapActivity, "${response.body()?.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseHttp>, t: Throwable) {
-                Toast.makeText(this@DeliveryOrdersMapActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-
-        })
     }
 
     private fun checkPermission() : Boolean {

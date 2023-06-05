@@ -35,6 +35,13 @@ class RestaurantTabsPagerAdapter(
             }
             2 -> {
                 val bundle = Bundle()
+                bundle.putString("status", "EN CAMINO")
+                val fragment = RestaurantOrdersStatusFragment()
+                fragment.arguments = bundle
+                return fragment
+            }
+            3 -> {
+                val bundle = Bundle()
                 bundle.putString("status", "ENTREGADO")
                 val fragment = RestaurantOrdersStatusFragment()
                 fragment.arguments = bundle
