@@ -54,7 +54,6 @@ class ClientOrdersStatusFragment : Fragment() {
             override fun onResponse(call: Call<ArrayList<Order>>,response: Response<ArrayList<Order>>) {
                 if (response.body() != null) {
                     val orders = response.body()
-                    Log.i("RESPONSE_CLIENTE", "onResponse: ${orders?.get(0)?.toJson()}")
                     adapter = OrdersClientAdapter(requireActivity(), orders!!)
                     recyclerView?.adapter = adapter
                 }

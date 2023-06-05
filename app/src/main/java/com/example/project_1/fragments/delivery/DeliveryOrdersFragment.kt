@@ -37,7 +37,7 @@ class DeliveryOrdersFragment : Fragment() {
         tabLayout?.isInlineLabel = true
 
 
-        val numberOfTab = 4
+        val numberOfTab = 3
         val adapter = DeliveryTabsPagerAdapter(requireActivity().supportFragmentManager, lifecycle, numberOfTab)
         viewPager?.adapter = adapter
         viewPager?.isUserInputEnabled = true

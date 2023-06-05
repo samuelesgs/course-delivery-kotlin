@@ -90,6 +90,7 @@ class DeliveryOrdersDetailActivity : AppCompatActivity() {
 
     private fun goToMap() {
         val intent = Intent(this, DeliveryOrdersMapActivity::class.java)
+        intent.putExtra("order", order?.toJson())
         startActivity(intent)
     }
 
