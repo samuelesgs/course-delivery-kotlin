@@ -27,6 +27,8 @@ import com.example.project_1.models.ResponseHttp
 import com.example.project_1.models.User
 import com.example.project_1.providers.OrderProvider
 import com.example.project_1.utils.SharedPref
+import com.example.project_1.utils.SocketHandler
+import com.github.nkzawa.socketio.client.Socket
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -82,6 +84,8 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var distanceBetween : Float = 0.0f
 
+    var socket : Socket ? = null
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
@@ -127,6 +131,13 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this, "Acercate mas al lugar de entrega", Toast.LENGTH_SHORT).show()
             }
         }
+        connectSocket()
+    }
+
+    private fun connectSocket() {
+        SocketHandler.setSocket()
+        socket = SocketHandler.getSocket()
+        socket?.connect()
     }
 
     override fun onDestroy() {
@@ -134,6 +145,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         if (fusedLocationClient != null) {
             fusedLocationClient?.removeLocationUpdates(locationCallback)
         }
+        socket?.disconnect()
     }
 
     private fun goToHome() {
