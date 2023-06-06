@@ -1,12 +1,17 @@
 package com.example.project_1.activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.example.project_1.R
 import com.example.project_1.activities.client.home.ClientHomeActivity
 import com.example.project_1.activities.delivery.home.DeliveryHomeActivity
@@ -15,6 +20,8 @@ import com.example.project_1.models.ResponseHttp
 import com.example.project_1.models.User
 import com.example.project_1.providers.UsersProvider
 import com.example.project_1.utils.SharedPref
+import com.google.android.gms.tasks.Task
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,6 +38,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task: Task<String> ->
+            if (!task.isSuccessful) {
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            Log.d("PUSH_TOKEN", "pushToken: $token")
+        }
         editEmail = findViewById(R.id.editEmail)
         editPassword = findViewById(R.id.editPassword)
         sharedPref = SharedPref(this)
@@ -42,6 +57,8 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.buttonLogin).setOnClickListener{ login() }
     }
+
+
 
     private fun login() {
         val email = editEmail.text.toString()
