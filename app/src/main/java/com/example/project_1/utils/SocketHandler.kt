@@ -1,8 +1,8 @@
 package com.example.project_1.utils
 
 import android.util.Log
-import com.github.nkzawa.socketio.client.Socket
 import com.github.nkzawa.socketio.client.IO
+import com.github.nkzawa.socketio.client.Socket
 import java.net.URISyntaxException
 
 object SocketHandler {

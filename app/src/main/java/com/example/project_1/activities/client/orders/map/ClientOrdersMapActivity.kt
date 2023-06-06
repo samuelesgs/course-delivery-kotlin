@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -13,19 +12,19 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.example.project_1.R
-import com.example.project_1.activities.delivery.home.DeliveryHomeActivity
 import com.example.project_1.models.Order
-import com.example.project_1.models.ResponseHttp
+import com.example.project_1.models.SocketEmit
 import com.example.project_1.models.User
 import com.example.project_1.providers.OrderProvider
 import com.example.project_1.utils.SharedPref
+import com.example.project_1.utils.SocketHandler
+import com.github.nkzawa.socketio.client.Socket
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -34,27 +33,21 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import com.maps.route.extensions.drawRouteOnMap
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private var deliveryLocation: LatLng ? = null
-    private val TAG = "DELIVERY_ORDER_MAP_ACTIVITY"
+    private val TAG = "CLIENT_ORDER_MAP_ACTIVITY"
 
-    var marketDelivery : Marker? = null
-    var marketAddress : Marker? = null
+    private var marketDelivery : Marker? = null
+    private var marketAddress : Marker? = null
 
     var googleMap : GoogleMap? = null
 
     val PERMISSION_ID = 42
     var fusedLocationClient : FusedLocationProviderClient? = null
 
-
-    var city = ""
-    var country = ""
     var address = ""
     var addressLatLng : LatLng? = null
     var myLocationLatLng : LatLng? = null
@@ -75,6 +68,8 @@ class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     var user : User?  = null
     var sharedPref: SharedPref? = null
 
+    var socket : Socket ? = null
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
@@ -85,9 +80,8 @@ class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
                         LatLng(myLocationLatLng?.latitude!!, myLocationLatLng?.longitude!!)
                     ).zoom(15f).build()
                 ))
-            removeDeliveryMarker()
-            addDeliveryMarker()
-
+            //removeDeliveryMarker()
+            //addDeliveryMarker()
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,6 +108,24 @@ class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         setData()
 
         getLastLocation()
+        connectSocket()
+    }
+    private fun connectSocket() {
+        SocketHandler.setSocket()
+        socket = SocketHandler.getSocket()
+        socket?.connect()
+        socket?.on("position/${order?.id}") {args ->
+            if (args[0] != null){
+                runOnUiThread {
+                    val data = gson.fromJson(args[0].toString(), SocketEmit::class.java)
+                    Log.i(TAG, "connectSocket: ${gson.toJson(data)}")
+                    removeDeliveryMarker()
+                    addDeliveryMarker(data.lat, data.lng)
+                }
+            } else {
+                Log.i(TAG, "connectSocket:  NULL")
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -121,6 +133,7 @@ class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         if (fusedLocationClient != null) {
             fusedLocationClient?.removeLocationUpdates(locationCallback)
         }
+        socket?.disconnect()
     }
 
   private fun setData() {
@@ -164,13 +177,12 @@ class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun addDeliveryMarker(){
-        if (deliveryLocation != null) {
+    private fun addDeliveryMarker(lat : Double, lng : Double){
+        val location = LatLng(lat, lng)
             marketDelivery = googleMap?.addMarker(
                 MarkerOptions()
-                    .position(deliveryLocation!!)
+                    .position(location)
                     .title("Posicion repartidor").icon(BitmapDescriptorFactory.fromResource(R.drawable.delivery)))
-        }
     }
 
     private fun addAddressMarker(){
@@ -220,7 +232,7 @@ class ClientOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
                         myLocationLatLng = LatLng(location.latitude, location.longitude)
 
                         removeDeliveryMarker()
-                        addDeliveryMarker()
+                        addDeliveryMarker(deliveryLocation?.latitude!!, deliveryLocation?.longitude!!)
                         addAddressMarker()
                         drawRoute()
                         if (deliveryLocation != null) {

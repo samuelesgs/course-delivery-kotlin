@@ -24,6 +24,7 @@ import com.example.project_1.R
 import com.example.project_1.activities.delivery.home.DeliveryHomeActivity
 import com.example.project_1.models.Order
 import com.example.project_1.models.ResponseHttp
+import com.example.project_1.models.SocketEmit
 import com.example.project_1.models.User
 import com.example.project_1.providers.OrderProvider
 import com.example.project_1.utils.SharedPref
@@ -90,6 +91,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
             myLocationLatLng = LatLng(lastLocation!!.latitude, lastLocation.longitude)
+            emmitPosition()
             googleMap?.moveCamera(
                 CameraUpdateFactory.newCameraPosition(
                     CameraPosition.builder().target(
@@ -134,6 +136,16 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
         connectSocket()
     }
 
+    private fun emmitPosition() {
+        val data = SocketEmit(
+            id_order = order?.id!!,
+            lat = myLocationLatLng?.latitude!!,
+            lng = myLocationLatLng?.longitude!!
+        )
+        //updateLatLng(myLocationLatLng?.latitude!!, myLocationLatLng?.longitude!!)
+        socket?.emit("position", data.toJson())
+    }
+
     private fun connectSocket() {
         SocketHandler.setSocket()
         socket = SocketHandler.getSocket()
@@ -154,6 +166,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun updateOrder() {
+        Log.i(TAG, "updateOrder: ")
         ordersProvider?.updateToDelivered(order!!)?.enqueue(object : Callback<ResponseHttp> {
             override fun onResponse(call: Call<ResponseHttp>, response: Response<ResponseHttp>) {
                 if (response.body() != null) {
@@ -268,6 +281,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getLastLocation() {
+        Log.i(TAG, "getLastLocation: ")
         if (checkPermission()) {
 
             if (isLocationEnable()) {
@@ -306,6 +320,7 @@ class DeliveryOrdersMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun updateLatLng(lat : Double, lng : Double) {
+        Log.i(TAG, "updateLatLng: ")
         order?.lat = lat
         order?.lng = lng
         ordersProvider?.updateLatLng(order!!)?.enqueue(object : Callback<ResponseHttp> {
